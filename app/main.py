@@ -1,5 +1,5 @@
 """
-GAIA Commodities — entrypoint.
+Onyx Commodities — entrypoint.
 
 FastAPI app for health checks + a background loop that scans all
 instruments on an interval and pushes any confluence signals to Telegram.
@@ -19,7 +19,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
 )
-logger = logging.getLogger("gaia.main")
+logger = logging.getLogger("onyx.main")
 
 _last_scan_at: datetime | None = None
 _last_signals_count: int = 0
@@ -50,17 +50,17 @@ async def _scan_loop():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     task = asyncio.create_task(_scan_loop())
-    logger.info("GAIA Commodities scan loop started (interval=%ss)", config.POLL_INTERVAL_SECONDS)
+    logger.info("Onyx Commodities scan loop started (interval=%ss)", config.POLL_INTERVAL_SECONDS)
     yield
     task.cancel()
 
 
-app = FastAPI(title="GAIA Commodities", lifespan=lifespan)
+app = FastAPI(title="Onyx Commodities", lifespan=lifespan)
 
 
 @app.get("/")
 def root():
-    return {"service": "GAIA Commodities", "status": "running"}
+    return {"service": "Onyx Commodities", "status": "running"}
 
 
 @app.get("/health")

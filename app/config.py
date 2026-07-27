@@ -1,5 +1,5 @@
 """
-GAIA Commodities — configuration.
+Onyx Commodities — configuration.
 
 Mirrors the pattern used in AURUM / TITAN: one place to tune instruments,
 indicator parameters, and confluence thresholds without touching logic code.

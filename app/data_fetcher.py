@@ -1,5 +1,5 @@
 """
-GAIA Commodities — market data fetcher.
+Onyx Commodities — market data fetcher.
 
 Lesson carried over from TITAN: Twelve Data credits burn fast if you fetch
 every indicator separately. This module pulls ONE raw OHLC time series per
@@ -15,7 +15,7 @@ import pandas as pd
 
 from app import config
 
-logger = logging.getLogger("gaia.data_fetcher")
+logger = logging.getLogger("onyx.data_fetcher")
 
 _BASE_URL = "https://api.twelvedata.com/time_series"
 

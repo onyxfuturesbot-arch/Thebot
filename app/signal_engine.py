@@ -1,5 +1,5 @@
 """
-GAIA Commodities — confluence signal engine.
+Onyx Commodities — confluence signal engine.
 
 Scores each instrument against a stack of independent indicator checks.
 A signal fires only when enough of the stack agrees AND the instrument
@@ -13,7 +13,7 @@ from dataclasses import dataclass, field
 
 from app import config, data_fetcher, indicators
 
-logger = logging.getLogger("gaia.signal_engine")
+logger = logging.getLogger("onyx.signal_engine")
 
 
 @dataclass

@@ -1,5 +1,5 @@
 """
-GAIA Commodities — local indicator calculations.
+Onyx Commodities — local indicator calculations.
 
 All computed from raw OHLC in pandas, no external indicator API calls
 (same fix TITAN applied after burning through Twelve Data credits).

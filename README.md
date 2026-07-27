@@ -1,4 +1,4 @@
-# GAIA Commodities
+# Onyx Commodities
 
 Telegram signal bot for commodity futures (gold, WTI, copper, corn, coffee to start),
 built on the same architecture as AURUM / TITAN / CIPHER: FastAPI on Railway,

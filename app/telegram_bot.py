@@ -1,5 +1,5 @@
 """
-GAIA Commodities — Telegram delivery.
+Onyx Commodities — Telegram delivery.
 
 Same channel-push pattern as AURUM/TITAN/CIPHER: format a Signal object into
 a clean message and post it to the configured channel.
@@ -11,7 +11,7 @@ import requests
 from app import config
 from app.signal_engine import Signal
 
-logger = logging.getLogger("gaia.telegram_bot")
+logger = logging.getLogger("onyx.telegram_bot")
 
 _API_BASE = "https://api.telegram.org/bot{token}/sendMessage"
 
@@ -34,7 +34,7 @@ def _format_message(signal: Signal) -> str:
         f"SL: {signal.stop_loss:.{decimals}f}\n"
         f"{tp_lines}\n\n"
         f"*Confluence factors:*\n{reasons}\n\n"
-        f"_GAIA Commodities — signal, not financial advice_"
+        f"_Onyx Commodities — signal, not financial advice_"
     )
 
 
