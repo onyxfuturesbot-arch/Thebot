@@ -23,13 +23,25 @@ logger = logging.getLogger("onyx.main")
 
 _last_scan_at: datetime | None = None
 _last_signals_count: int = 0
+_last_trade_updates_count: int = 0
 _scan_errors: int = 0
 
 
 async def _scan_loop():
-    global _last_scan_at, _last_signals_count, _scan_errors
+    global _last_scan_at, _last_signals_count, _last_trade_updates_count, _scan_errors
     while True:
         try:
+            # Check open trades for SL/TP hits BEFORE looking for new signals,
+            # so a closed trade frees its instrument up the same cycle.
+            events = signal_engine.monitor_active_trades()
+            _last_trade_updates_count = len(events)
+            for event in events:
+                sent = telegram_bot.send_trade_update(event)
+                logger.info(
+                    "%s %s @ %.4f -> telegram sent=%s",
+                    event["instrument_key"], event["event"], event["price"], sent,
+                )
+
             signals = signal_engine.scan_all()
             _last_scan_at = datetime.now(timezone.utc)
             _last_signals_count = len(signals)
@@ -69,18 +81,26 @@ def health():
         "status": "ok",
         "last_scan_at": _last_scan_at.isoformat() if _last_scan_at else None,
         "last_signals_count": _last_signals_count,
+        "last_trade_updates_count": _last_trade_updates_count,
         "scan_errors": _scan_errors,
         "instruments": list(config.INSTRUMENTS.keys()),
+        "active_trades": list(signal_engine._active_trades.keys()),
     }
 
 
 @app.post("/scan-now")
 def scan_now():
     """Manual trigger — useful for testing without waiting on the poll interval."""
+    events = signal_engine.monitor_active_trades()
+    for event in events:
+        telegram_bot.send_trade_update(event)
+
     signals = signal_engine.scan_all()
     for sig in signals:
         telegram_bot.send_signal(sig)
+
     return {
+        "trade_updates": len(events),
         "signals_found": len(signals),
         "signals": [
             {

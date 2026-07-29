@@ -22,39 +22,51 @@ INSTRUMENTS = {
         "category": "metals",
         "tradovate_root": "GC",
         "tradovate_exchange": "COMEX",
-    },
-    "WTI": {
-        "symbol": "WTI/USD",
-        "display_name": "WTI Crude Oil",
-        "pip_size": 0.01,
-        "category": "energy",
-        "tradovate_root": "CL",
-        "tradovate_exchange": "NYMEX",
-    },
-    "COPPER": {
-        "symbol": "XCU/USD",
-        "display_name": "Copper",
-        "pip_size": 0.0001,
-        "category": "metals",
-        "tradovate_root": "HG",
-        "tradovate_exchange": "COMEX",
+        "instrument_type": "spot",       # real spot price, matches futures closely
     },
     "CORN": {
-        "symbol": "C_1",
+        "symbol": "CORN",
         "display_name": "Corn Futures",
         "pip_size": 0.25,
         "category": "ags",
         "tradovate_root": "ZC",
         "tradovate_exchange": "CBOT",
+        "instrument_type": "etf_proxy",  # CORN (Teucrium Corn Fund) — confirmed working
     },
-    "COFFEE": {
-        "symbol": "KC1",
-        "display_name": "Coffee Futures",
-        "pip_size": 0.05,
-        "category": "ags",
-        "tradovate_root": "KC",
-        "tradovate_exchange": "ICE",
-    },
+
+    # Commented out until check_symbols.py confirms these ETF tickers actually
+    # return data on your Twelve Data plan (never verified — WTI/Copper/Coffee
+    # 404'd under their real futures symbols, so we picked these as proxies
+    # but didn't test them before this trim). Uncomment and re-test before
+    # re-enabling.
+    #
+    # "WTI": {
+    #     "symbol": "USO",
+    #     "display_name": "WTI Crude Oil",
+    #     "pip_size": 0.01,
+    #     "category": "energy",
+    #     "tradovate_root": "CL",
+    #     "tradovate_exchange": "NYMEX",
+    #     "instrument_type": "etf_proxy",
+    # },
+    # "COPPER": {
+    #     "symbol": "CPER",
+    #     "display_name": "Copper",
+    #     "pip_size": 0.0001,
+    #     "category": "metals",
+    #     "tradovate_root": "HG",
+    #     "tradovate_exchange": "COMEX",
+    #     "instrument_type": "etf_proxy",
+    # },
+    # "COFFEE": {
+    #     "symbol": "JO",
+    #     "display_name": "Coffee Futures",
+    #     "pip_size": 0.05,
+    #     "category": "ags",
+    #     "tradovate_root": "KC",
+    #     "tradovate_exchange": "ICE",
+    #     "instrument_type": "etf_proxy",
+    # },
 }
 
 # ---------------------------------------------------------------------------
@@ -105,10 +117,16 @@ PAUSE_HOURS_AFTER_MAX_LOSSES = 12
 # Ags are thin outside US floor hours; energy/metals trade cleaner in
 # London + US overlap. Hours are UTC. Empty list = no restriction.
 SESSION_FILTERS_UTC = {
-    "metals": [(7, 20)],   # London open -> US close
+    "metals": [(7, 20)],   # London open -> US close (applies to true spot/futures, e.g. Gold)
     "energy": [(7, 20)],
     "ags": [(13, 19)],     # CBOT floor-driven liquidity window
 }
+
+# ETF-proxied instruments (WTI/Copper/Corn/Coffee via USO/CPER/CORN/JO) only
+# trade during US stock market hours, unlike the near-24h futures they track.
+# This OVERRIDES the category-based window above whenever
+# INSTRUMENTS[key]["instrument_type"] == "etf_proxy".
+ETF_MARKET_HOURS_UTC = [(14, 21)]  # ~9:30am-4pm ET, UTC (adjust for DST manually if needed)
 
 # ---------------------------------------------------------------------------
 # External services (populate via environment variables on Railway)
